@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Discussions</h1>
+<div class="padding">
+  <div class="ui grid">
+    <div class="row">
+      <div class="column">
+        <a href="{{url_for('edit_article',article_id=0)}}" class="ui mini right floated button">Write an article</a>
+      </div>
+    </div>
+  </div>
+  <table class="ui very basic table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Publish Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set articles = sorter.get() %}
+      {% for article in articles %}
+      <tr>
+        <td><a href="{{url_for('article',article_id=article.id)}}">{{article.title}}</a></td>
+        <td><a href="{{url_for('user',user_id=article.user.id)}}">{{article.user.nickname}}</a></td>
+        <td>{{tool.pretty_time(article.public_time)}}</td>
+     </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br>
+  {{sorter.get_html()|safe}}
+</div>
+{% endblock %}

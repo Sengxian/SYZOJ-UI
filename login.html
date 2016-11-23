@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="ui error message" id="error" hidden></div>
+<div class="ui middle aligned center aligned grid">
+  <div class="row">
+    <div class="column" style="max-width: 450px">
+      <h2 class="ui image header">
+        <div class="content">
+          Log-in to your account
+        </div>
+      </h2>
+      <form class="ui large form">
+        <div class="ui existing segment">
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="user icon"></i>
+              <input name="email" placeholder="Username" type="text" id="username">
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="lock icon"></i>
+              <input name="password" placeholder="Password" type="password" id="password">
+            </div>
+          </div>
+          <div class="ui fluid large submit button" id="login">Login</div>
+        </div>
+
+        <div class="ui error message"></div>
+
+      </form>
+
+      <div class="ui message">
+        New to us? <a href="/sign_up">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+function show_error(error){
+    $("#error").text(error);
+    $("#error").show();
+}
+function success(session_id){
+    $.cookie('session_id',session_id,{expires:7});
+    window.location.href="/";
+}
+function login(){
+    password=$.md5($("#password").val() + "syzoj2_xxx")
+    $("#login").addClass("loading");
+    $.ajax({
+        url : "/api/login",
+        type : 'POST',
+        data:{"username":$("#username").val(),"password":password},
+        async:false,
+        success : function(data) {
+            error_code=data.error_code;
+            switch(error_code){
+                case 1001:
+                    show_error("No such user.");
+                    break;
+                case 1002:
+                    show_error("Wrong password.");
+                    break;
+                case 1:
+                    success(data.session_id);
+                    break;
+                default:
+                    show_error("Unknown error.");
+                    break;
+            }
+            $("#login").text("Login");
+            $("#login").removeClass("loading");
+        },
+        error :  function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.responseText);
+            show_error("Unknown error.");
+            $("#login").text("Login");
+        }
+    });
+}
+$(document).ready(function(){
+    $("#login").click(function(){
+        login();
+    });
+});
+    </script>
+{% endblock %}

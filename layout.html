@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <title>WHEZOJ</title>
+    <link href="//cdn.bootcss.com/semantic-ui/2.2.6/semantic.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/highlight.js/9.7.0/styles/github.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.6.0/styles/default.min.css">
+    <style type="text/css">
+      @font-face {
+        font-family: 'Raleway';
+        font-style: normal;
+        font-weight: 500;
+        src: local('Raleway Medium'), local('Raleway-Medium'), url('{{url_for("static", filename="Raleway-Medium.woff2")}}') format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+      }
+      .main.container {
+        margin-top: 6em;
+      }
+      .padding {
+        padding-left: 1.5em;
+        padding-right: 1.5em;
+      }
+      .ui.segment:first-child {
+        margin-top:0;
+      }
+      .hljs {
+        background: #FFF !important;
+      }
+      .ui.footer.segment {
+        margin: 2em 0em 0em;
+        padding: 1em 0em;
+        border: none;
+      }
+        /* status color*/
+        .status.accepted {
+            color: green;   
+        }
+        .status.wrong_answer, .status.presentation_error, .status.time_limit_exceed, .status.memory_limit_exceed,
+        .status.runtime_error, .status.output_limit_exceed {
+            color: red;
+        }
+        .status.waiting, .status.system_error {
+            color: grey;
+        }
+        .status.compile_error {
+            color: rgb(0, 68, 136);
+        }
+    </style>
+</head>
+<body>
+    <div class="ui fixed borderless menu">
+        <div class="ui container">
+            <a class="header item" href="/"><span style="font-family: Raleway; font-size: 1.5em">WHEZOJ</span></a>
+            <a class="item{% if tab=='index'%} active{% endif %}" href="/">Home</a>
+            <a class="item{% if tab=='problem_set'%} active{% endif %}" href="/problem">Problem Set</a>
+            <a class="item{% if tab=='judge'%} active{% endif %}" href="/judge_state">Status</a>
+            <a class="item{% if tab=='ranklist'%} active{% endif %}" href="/ranklist">Ranklist</a>
+            <a class="item{% if tab=='contest_tab'%} active{% endif %}{% block contest_tab %}{% endblock %}" href="/contest">Contests</a>
+            <a class="item{% if tab=='discussion'%} active{% endif %}" href="/discussion">Discussions</a>
+            <div class="right menu">
+                {% set user=tool.get_cur_user() %}
+                {% if user %}
+              <div class="ui simple dropdown item">
+                {{user.nickname}} <i class="dropdown icon"></i>
+                <div class="menu">
+                  <a class="item" href="{{url_for('user', user_id=user.id)}}"><i class="user icon"></i>Profile</a>
+                  <a class="item" href="{{url_for('edit_user', user_id=user.id)}}"><i class="settings icon"></i>Settings</a>
+                  <a class="item" href="#" id="logout"><i class="power icon"></i>Log out</a>
+                </div>
+              </div>
+                {% else %}
+                <div class="item">
+                    <div class="ui button" style="margin-right: 0.5em" onclick="window.location.href='{{ url_for('login')}}'">
+                        Log-in
+                    </div>
+                    <div class="ui primary button" onclick="window.location.href='{{ url_for('sign_up')}}'">
+                        Sign Up
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="ui main container">
+    {% block body %}{% endblock %}
+    </div>
+    <div class="ui vertical footer segment">
+      <div class="ui center aligned container">
+        <span style="color: #999;">Based on <a target="_blank" style="color: #555;" href="https://github.com/11HighSchoolofZhengzhou/syzoj">SYZOJ</a>. Themed by <a target="_blank" style="color: #555" href="http://www.sengxian.com">Sengxian</a>.</span>
+      </div>
+    </div>
+
+<script src="//cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='jquery.ext.js') }}"></script>
+<script src="//cdn.bootcss.com/semantic-ui/2.2.6/semantic.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.8.0/highlight.min.js"></script>
+<script type="text/javascript">
+function logout(){
+    url='/api/logout?session_id='+$.cookie("session_id");
+    url=encodeURI(url);
+    $.ajax({
+        url: url,
+        type: 'POST',
+        async: false,
+    });
+}
+$("#logout").click(function(){
+    logout();
+    window.location.href="{{url_for('login')}}";
+});
+hljs.configure({tabReplace: '    '});
+</script>
+{% block script %}{% endblock %}
+</body>
+</html>

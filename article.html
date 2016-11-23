@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+{% block body %}
+<style type="text/css" xmlns:style="http://www.w3.org/1999/xhtml">
+    .small{
+    font-size: 0.7em;
+    }
+</style>
+<div class="padding">
+  <h1>{{article.title}}</h1>
+ 	<p style="font_size: 0.7em"><img style="vertical-align: middle;" src="{{article.user.get_gravatar_url(16)}}">
+ 		<a href="{{url_for('user',user_id=article.user.id)}}">{{article.user.nickname}}</a>
+ 		{% if article.user.nameplate %}{{article.user.nameplate | safe}}{% endif %} 于 {{tool.pretty_time(article.public_time)}} 发表, {{tool.pretty_time(article.update_time)}} 最后更新
+ 		{% if article.is_allowed_edit(user) %}
+    <a href="{{url_for('delete_article',article_id=article.id)}}">删除文章</a>
+    <a href="{{url_for('edit_article',article_id=article.id)}}">编辑文章</a>
+    {% endif %}
+ 	</p>
+  <div class="ui existing segment">
+	  <div id="content">{{article.content}}</div>
+  </div>
+  {% if comment_num != 0 %}
+  <div class="ui comments" style="max-width: none;">
+    <h3 class="ui dividing header">{{comment_num}} Comments</h3>
+    {% set comments = sorter.get() %}
+    {% for comment in comments %}
+      <div class="comment">
+        <a class="avatar">
+          <img src="{{comment.user.get_gravatar_url(60)}}">
+        </a>
+        <div class="content">
+          <a class="author">{{comment.user.nickname}}</a>
+          <div class="metadata">
+            <span class="date">{{ tool.pretty_time(comment.public_time) }}</span>
+          </div>
+          <div class="text">{{ comment.content }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <br>
+  {{ sorter.get_html() | safe }}
+  {% endif %}
+   <form style="margin-top: 50px" class="ui reply form" method="post" action="{{ url_for('comment_article', article_id=article.id) }}">
+      <div class="field">
+        <textarea name="comment"></textarea>
+      </div>
+      <button type="submit" class="ui labeled submit icon button">
+        <i class="icon edit"></i> Add Reply
+      </button>
+    </form>  
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\\(','\\)']]}});</script>
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/javascript" src="//cdn.bootcss.com/marked/0.3.6/marked.min.js"></script>
+<script type="text/javascript">
+function render(tag){
+    tag.html(marked(tag.html()));
+}
+marked.setOptions({
+  highlight: function (code) {
+    return "<code>"+code+"</code>";
+  }
+});
+$(document).ready(function() {
+    render($("#content"));
+    $("pre").css('margin-top', '0');
+    $("pre").css('margin-bottom', '0');
+    $("pre").wrap('<div class="ui segment"></div>');
+    $('pre code').each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
+});
+</script>
+{% endblock %}
+

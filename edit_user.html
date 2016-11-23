@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Edit Profile</h1>
+<div class="padding">
+
+    <div class="ui {% if status == 1 %}success{% else %}error{% endif %} message" id="error" {% if not status %}hidden{% endif %}>
+            {% if status==1 %}
+            	<p id="error_info">修改成功</p>
+            {% elif status==3001 %}
+            	<p id="error_info">邮箱格式错误</p>
+            {% elif status==3002 %}
+            	<p id="error_info">原密码错误...不要偷偷改别人密码哦</p>
+            {% elif status==3003 %}
+            	<p id="error_info">新密码不得为空</p>
+            {% else %}
+            	<p id="error_info">未知状态</p>
+            {% endif %}
+    </div>
+		<form class="ui form" action="{{url_for('edit_user',user_id=edited_user.id)}}" method="post" onsubmit="return check()">
+		    <div class="field">
+		    	<label for="email">Email</label>
+		    	<input type="email" id="email" name="email" value="{{edited_user.email}}">
+		    </div>
+		    <div class="field">
+		    	<label for="information">Motto</label>
+		    	<textarea rows="5" id="information" name="information">{% if edited_user.information %}{{edited_user.information}}{% else %}泥萌看什么看，{{edited_user.nickname}} 什么都没有说。{% endif %}</textarea>
+		    </div>
+        <div class="field">
+        <label class="ui header">Change password</label>
+          <input type="password" placeholder="Old password(Leave it blank if you do not want to change the password)" name="old_password" id="old_password">
+        </div>
+        <div class="two fields" id="new_password_field">
+          <div class="field">
+            <input type="password" placeholder="New password" name="new_password" id="password1">
+          </div>
+          <div class="field">
+            <input type="password" placeholder="Re-enter you new password" id="password2">
+          </div>
+        </div>
+        <button type="submit" class="ui button">Submit</button>
+		</form>
+	</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+function make_md5(tag){
+	if (tag.val()){
+		tag.val($.md5(tag.val() + "syzoj2_xxx"));
+	}
+}
+function check(){
+	old_password = $("#old_password");
+	password1 = $("#password1");
+	password2 = $("#password2");
+	if ($("#old_password").val() && password1.val() != password2.val()){
+		$("#error").removeClass("success");
+		$("#error").removeClass("error");
+		$("#error").addClass("error");
+		$("#error_info").html("两次输入的密码不一致");
+		$("#error").show();
+		return false;
+	}
+	make_md5(old_password);
+	make_md5(password1);
+	make_md5(password2);
+	return true;
+}
+</script>
+{% endblock %}

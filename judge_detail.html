@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="padding">
+  <table class="ui very basic table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Problem title</th>
+        <th>Status</th>
+        <th>Score</th>
+        <th>Running time</th>
+        <th>Sumbitter</th>
+        <th>Submission time</th>
+      </tr>
+     </thead>
+     <tbody>
+       {% set see_result=judge.is_allowed_see_result(user) %}
+       {% set result=judge.get_result()%}
+       <tr>
+         <td>{{judge.id}}</td>
+         <td><a href="{{url_for('problem',problem_id=judge.problem.id)}}">{{judge.problem.title}}</a></td>
+         {% if see_result %}
+         <td><span class="status {{result["status"].lower().replace(' ', '_')}}">{{result["status"]}}</span></td>
+         <td>{{result["score"]}}</td>
+         <td>{{result["total_time"]}} ms</td>
+         {% else %}
+         <td>Hidden</td>
+         <td>Hidden</td>
+         <td>Hidden</td>
+         {% endif %}
+         <td>{{judge.user.nickname}}</td>
+         <td>{{tool.pretty_time(judge.submit_time)}}</td>
+       </tr>
+     </tbody>
+  </table>
+  {% set see_code = judge.is_allowed_see_code(user) %}
+  {% if see_code %}
+    <pre><code>{{judge.code}}</code></pre>
+  {% else %}
+    <pre><code>You are now allowed to see the code.</code></pre>
+  {% endif %}
+<div class="ui styled fluid accordion">
+  {% for i in range(result["case_num"]) %}
+    {% set case = result[tool.to_str(i)]%}
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Testcase:{{i + 1}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Status:{{case["status"]}} &nbsp;&nbsp;&nbsp;  Running time:{{case["time_used"]}} ms &nbsp;&nbsp;&nbsp;Memory usage:{{case["memory_used"]}} KB
+  </div>
+  <div class="content">
+    <p>
+      <strong>Input</strong>
+      <pre><code>{{case["input"]}}</code></pre>
+      <strong>Expected output</strong>
+      <pre><code>{{case["answer"]}}</code></pre>
+      <strong>Your output</strong>
+      <pre><code>{{case["user_out"]}}</code></pre>
+    </p>
+  </div>
+  {% endfor %}
+</div>
+ 
+{% endblock %}
+{% block script %}
+<script>
+$(document).ready(function(){
+  $('.ui.accordion').accordion();
+});
+$(document).ready(function(){
+  $("pre").css('margin-top', '0');
+  $("pre").css('margin-bottom', '0');
+  $("pre").wrap('<div class="ui existing segment"></div>');
+  hljs.initHighlightingOnLoad();
+});
+</script>
+{% endblock %}
+

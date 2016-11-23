@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="padding">
+  <div class="ui three column grid">
+    <div class="eleven wide column">
+      <h4 class="ui top attached block header">Announcements</h4>
+      <div class="ui bottom attached segment">
+        <table class="ui very basic table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="article/7">WHEZOJ Easy Round 2 题解</a>
+              </td>
+              <td>2016-11-14</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="article/5">WHEZOJ Easy Round 1 题解</a>
+              </td>
+              <td>2016-10-28</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="article/2">退役狗Fuxey的OI点滴</a>
+              </td>
+              <td>2016-9-1</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="article/1">WHEZOJ 使用指南</a>
+              </td>
+              <td>2016-8-31</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h4 class="ui top attached block header">Ranklist</h4>
+      <div class="ui bottom attached segment">
+        <table class="ui very basic table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>昵称</th>
+              <th>个性签名</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% set rank = 1 %}
+            {% set users = ranker.get() %}
+            {% for user in users %}
+              {% if user.is_show %}
+              <tr>
+                <td>{{ rank }}</td>
+                {% set rank = rank + 1 %}
+                <td><a href="{{url_for('user', user_id = user.id)}}">{{user.nickname}}</td>
+                <td>{% if user.information %}{{user.information}}{% endif %}</td>
+              </tr>    
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="right floated five wide column">
+      <h4 class="ui top attached block header">Board</h4>
+      <div class="ui bottom attached segment">
+        WHEZOJ in under maintainence now.
+      </div>
+      <h4 class="ui top attached block header">Recent contest</h4>
+      <div class="ui bottom attached segment">
+        No contest now.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

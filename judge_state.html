@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Status</h1>
+<div class="padding">
+  <div class="ui two column grid">
+    <div class="twelve wide column">
+      <form action="/judge_state" class="ui mini form" method="get" role="form">
+        <div class="inline field">
+          <input name="submitter" placeholder="Username" style="margin: 0px;" type="text" value=""> <input name="problem_id" placeholder="Problem ID" type="text" value=""> <button class="ui mini button" type="submit">Search</button>
+        </div>
+      </form>
+    </div>
+    {% if user %}
+    <div class="four wide column padding">
+      <a class="ui mini button right floated" href="/judge_state?submitter={{user.nickname}}">My submissions</a>
+    </div>
+    {% endif %}
+  </div><br>
+  <table class="ui very basic table" style="text-align: center;">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Problem Title</th>
+        <th>Status</th>
+        <th>Score</th>
+        <th>Running Time</th>
+        <th>Submitter</th>
+        <th>Submission time</th>
+        <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for judge in judges %}
+        {% set see_result=judge.is_allowed_see_result(user) %}
+        {% set result=judge.get_result()%}
+      <tr>
+        <td><a href="{{url_for('judge_detail',judge_id=judge.id)}}">#{{judge.id}}</a></td>
+        <td><a href="{{url_for('problem',problem_id=judge.problem.id)}}">{{judge.problem.title}}</a></td>
+          {% if see_result %}          
+        <td>
+            <span class="status {{judge.status.lower().replace(' ', '_')}}">
+            {{judge.status}}
+            </span>
+        </td>
+        {% if judge.is_allowed_see_code(user) %}
+        <td>{{result["score"]}}</td>
+        {% else %}
+        <td>{{result["score"]}}</td>
+        {% endif %}
+
+        <td>{{result["total_time"]}} ms</td>
+      {% else %}
+            <td>Hidden</td>
+            <td>Hidden</td>
+            <td>Hidden</td>
+      {% endif %}
+        <td><a href="{{url_for('user',user_id=judge.user.id)}}">{{judge.user.nickname}}</a></td>
+        <td>{{tool.pretty_time(judge.submit_time)}}</td>
+        <td><a href="{{url_for('judge_detail',judge_id=judge.id)}}"><i style="color: #000;" class="code icon"></i></a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <br>
+  {{sorter.get_html()|safe}}
+</div>
+{% endblock %}

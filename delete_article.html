@@ -1,0 +1,7 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="padding">
+	<h1>Are you sure to <em>DELETE</em> article《{{article.title}}》？This action <em>CANNOT</em> be undone!</h1>
+	<a href="{{url_for('delete_article',article_id=article.id)}}?confirm=true" class="ui negative button">I understand the consequences, delete this article</a>
+</div>
+{% endblock %}

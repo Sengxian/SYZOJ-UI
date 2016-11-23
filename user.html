@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Profile</h1>
+<div class="padding">
+  <div class="ui grid">
+    <div class="eleven wide column">
+      <div class="ui grid">
+        <div class="row">
+          <div class="eight wide column">
+            <h4 class="ui top attached block header">Image</h4>
+            <div class="ui bottom attached segment"><img src="{{shown_user.get_gravatar_url(160)}}"></img></div>
+          </div>  
+          <div class="eight wide column">
+            <div class="ui grid">
+              <div class="row">
+                <div class="column">
+                  <h4 class="ui top attached block header">Nick name</h4>
+                  <div class="ui bottom attached segment">{{shown_user.nickname}}{% if shown_user.nameplate %}{{shown_user.nameplate | safe}}{% endif %}</div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="column">
+                  <h4 class="ui top attached block header">Email</h4>
+                  <div class="ui bottom attached segment">{{shown_user.email}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="column">
+            <h4 class="ui top attached block header">Articles</h4>
+            <div class="ui bottom attached segment">
+              <table class="ui very basic table">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Time</th>
+                  </tr> 
+                </thead>
+                <tbody>
+                 {% for article in articles %}
+                    <tr>
+                      <td><a href="{{url_for('article',article_id=article.id)}}">{{article.title}}</a></td>
+                      <td>{{tool.pretty_time(article.public_time)}}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>  
+        </div>
+      </div>
+    </div>
+    <div class="five wide column">
+      <div class="ui grid">
+        <div class="row">
+          <div class="column">
+            <h4 class="ui top attached block header">Motto</h4>
+            <div class="ui bottom attached segment">{% if shown_user.information %}{{shown_user.information}}{% else %}泥萌看什么看，{{shown_user.nickname}}什么都没有说{% endif %}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="column">
+            <h4 class="ui top attached block header">Solved Problems</h4>
+            <div class="ui bottom attached segment">
+            {% for pid, title in shown_user.ac_problems %}
+			  	    <a href="{{url_for('problem',problem_id=pid)}}">{{pid}}</a>
+				    {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

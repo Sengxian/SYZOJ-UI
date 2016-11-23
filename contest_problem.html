@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% block contest_tab %} active{% endblock %}
+{% block body %}
+    <div class="ui center aligned grid">
+        <div class="row">
+          <h1>{{contest.title}} - {{problem.title}}</h1>
+        </div>
+        <div class="row" style="margin-top: -15px">
+            <span class="ui label">Memory Limit: {{problem.memory_limit}} MB</span>
+            <span class="ui label">Time Limit: {{problem.time_limit}} ms</span>
+        </div>
+        <div class="row" style="margin-top: -23px">
+            {% if problem.file_io %}
+            <span class="ui label">File input: {{problem.file_io_input_name}}</span>
+            <span class="ui label">File output: {{problem.file_io_output_name}}</span>
+            {% else %}
+            <span class="ui label">Standard IO</span>
+            {% endif %}
+        </div>
+    </div>
+<div class="ui grid">
+  <div class="row">
+    <div class="column">
+      <div class="ui buttons">
+        <a href="#submit_form" class="ui primary button">Submit</a>
+        <a href="{{url_for('contest', contest_id=contest.id)}}" class="ui positive button">Back to contest</a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
+      <h4 class="ui top attached block header">Description</h4>
+      <div class="ui bottom attached segment" id="description">{{problem.description | safe}}</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
+        <h4 class="ui top attached block header">Input format</h4>
+        <div class="ui bottom attached segment" id="input">{{problem.input_format | safe}}</div>
+    </div>
+  </div>
+    <div class="row">
+        <div class="column">
+          <h4 class="ui top attached block header">Output format</h4>
+          <div class="ui bottom attached segment" id="output">{{problem.output_format | safe}}</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+          <h4 class="ui top attached block header">Examples</h4>
+          <div class="ui bottom attached segment" id="example">{{problem.example | safe}}</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+          <h4 class="ui top attached block header">Limits and Hints</h4>
+          <div class="ui bottom attached segment" id="hint">{{problem.limit_and_hint | safe}}</div>
+        </div>
+    </div>
+</div>
+
+<h2 class="ui dividing header">提交代码</h2>
+<form id="submit_form" class="ui form" action="{{ url_for('submit_code', problem_id=problem.id, contest_id=contest.id) }}" method="post">
+   <div class="field">
+   <label for="doc-select-1">Select language</label>
+   <select name="language" id="doc-select-1">
+     <option value="C++">C++</option>
+   </select>
+   </div>
+   <div class="field">
+      <label>Code</label>
+      <textarea rows="15" name="code"></textarea>
+   </div>
+   <button type="submit" class="ui button">Submit</button>
+</form>
+{% endblock %}
+
+{% block script %}
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\\(','\\)']]}});</script>
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/javascript" src="//cdn.bootcss.com/marked/0.3.6/marked.min.js"></script>
+
+<script type="text/javascript">
+function render(tag){
+    tag.html(marked(tag.html()));
+}
+marked.setOptions({
+  highlight: function (code) {
+    return "<code>" + code + "</code>";
+  }
+});
+$(document).ready(function(){
+    render($("#description"));
+    render($("#input"));
+    render($("#output"));
+    render($("#example"));
+    render($("#hint"));
+    $("pre").css('margin-top', '0');
+    $("pre").css('margin-bottom', '0');
+    $("pre").wrap('<div class="ui attached segment"></div>');
+    $('pre code').each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
+});
+</script>
+{% endblock %}
+

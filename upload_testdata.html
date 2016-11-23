@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% block js %}
+<script>
+</script>
+{% endblock %}
+{% block body %}
+<h1 class="ui header">上传数据</h1>
+<div class="padding">
+	<div class="ui grid">
+    <div class="row">
+      <div class="seven wide column">
+	  	{% if problem.testdata %}
+  			<p>Data archive: {{problem.testdata.filename}}</p>
+  		{% set ok, list=parse(problem.testdata) %}
+	  		{% if ok %}
+	  		<h3>你已经上传了测试数据，并且已经解析出以下数据点</h3>
+  			  <table class="ui very basic table">
+	  			  <thead>
+		  		    <tr>
+			  	      <th>输入文件</th>
+				        <th>输出文件</th>
+  				    </tr>
+	  			  </thead>
+		  		  <tbody>
+				      {% for case in list %}
+				      <tr>
+			  	      <td>{{case[0]}}</td>
+				        <td>{{case[1]}}</td>
+  				    </tr>
+	  			    {% endfor %}
+		  		  </tbody>
+  				</table>
+	  		{% else %}
+		  	<h3>你已经上传了测试数据，但是数据包出现错误{{list}}</h3>
+  			{% endif %}
+	  	{% else %}
+		  	<h3>你还没有上传数据</h3>
+  		{% endif %}
+	    </div>
+      <div class="nine wide column">
+        <form class="ui form" action="{{url_for('upload_testdata',problem_id=problem.id)}}" method="post" enctype="multipart/form-data">
+		      <div class="two fields">
+		        <div class="field">
+		          <label for="doc-ds-ipt-1">时间限制(单位: ms)</label>
+  	  	      <input type="number" name="time_limit" value="{{problem.time_limit}}">
+    		    </div>
+		        <div class="field">
+		          <label for="doc-ds-ipt-1">内存限制(单位: MB)</label>
+  		        <input type="number" name="memory_limit" value="{{problem.memory_limit}}">
+  		      </div>
+	  	    </div>
+          {% if not problem.file_io %}
+          <div class="inline fields">
+            <label>IO 方式</label>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input name="io-method" value="std-io" id="std-io" type="radio" onclick="goDisable()" checked>
+                <label for="std-io">标准 IO</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input name="io-method" value="file-io" id="file-io" type="radio" onclick="goEnable()">
+                <label for="file-io">文件 IO</label>
+              </div>
+            </div>    
+          </div>
+          <div class="two fields">
+            <div class="field">
+              <label for="file_io_input_name">输入文件名</label>
+              <input type="text" id="file-io-input-name" name="file-io-input-name" value="{{problem.file_io_input_name}}" disabled>
+            </div>
+            <div class="field">
+              <label for="file_io_output_name">输出文件名</label>
+              <input type="text" id="file-io-output-name" name="file-io-output-name" value="{{problem.file_io_output_name}}" disabled>
+            </div>
+          </div>
+          {% else %}
+          <div class="inline fields">
+            <label>IO 方式</label>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input name="io-method" value="std-io" id="std-io" type="radio" onclick="goDisable()">
+                <label for="std-io">标准 IO</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input name="io-method" value="file-io" id="file-io" type="radio" onclick="goEnable()" checked>
+                <label for="file-io">文件 IO</label>
+              </div>
+            </div>    
+          </div>
+          <div class="two fields">
+            <div class="field">
+              <label for="file_io_input_name">输入文件名</label>
+              <input type="text" id="file-io-input-name" name="file-io-input-name" value="{{problem.file_io_input_name}}">
+            </div>
+            <div class="field">
+              <label for="file_io_output_name">输出文件名</label>
+              <input type="text" id="file-io-output-name" name="file-io-output-name" value="{{problem.file_io_output_name}}">
+            </div>
+          </div>
+          {% endif %}
+          <div class="field">
+  		      <label for="testdata">测试数据</label>
+	  	      <input type="file" id="testdata" name="testdata">
+          </div>
+			    <button type="submit" class="ui button">提交</button>
+        </form>
+	  </div>
+  </div>
+<div>
+{% endblock %}
+{% block script %}
+<script>
+function goEnable() {
+  document.getElementById('file-io-input-name').disabled = false;
+  document.getElementById('file-io-output-name').disabled = false;
+}
+function goDisable() {
+  document.getElementById('file-io-input-name').disabled = true;
+  document.getElementById('file-io-output-name').disabled = true;
+}
+</script>
+{% endblock %}

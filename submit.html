@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Sumbit for {{problem.title}}</h1>
+<div class="padding">
+  <form class="ui form" action="{{url_for('submit_code',problem_id=problem.id)}}" method="post">
+    <div class="field">
+  	  <label for="doc-select-1">Select Language</label>
+	    <select class="ui fluid dropdown" id="doc-select-1" name="language">
+        <option value="C++">C++</option>
+	  	  <option value="C">C</option>
+  		  <option value="Pascal">Pascal</option>
+	  	</select>
+    </div>
+	  <div class="field">
+		  <label>Code</label>
+			<textarea rows="15" name="code"></textarea>
+		</div>
+		<button type="submit" class="ui button">提交</button>
+	</form>
+</div>
+{% endblock %}
