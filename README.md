@@ -1,5 +1,5 @@
 # SYZOJ-UI
-A Theme for SYZOJ.
+A theme for [SYZOJ](https://github.com/11HighSchoolofZhengzhou/syzoj).
 
 ## Usage
 
